@@ -26,7 +26,7 @@ public class Scheduler {
 
         iLog.info("Starting Scheduler");
         configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 0, 10000); //read every tenth second.
-        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 0, 1000);
+        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 5, 500);
 
         iLog.info("Timers were started!");
 
@@ -81,15 +81,20 @@ public class Scheduler {
         }
     };
 
-    private void executeIfOnTime() {
+    private synchronized void executeIfOnTime() {
         Iterator iterator = dbConfiguredDevices.entrySet().iterator();
+
+
 
         while (iterator.hasNext()) {
             //Map.Entry<Integer, SchemaDevice> actualDevice = (Map.Entry) iterator.next();
             Map.Entry<Integer, Device> actualDevice = (Map.Entry)iterator.next();
-            for (SchemaDevice schemaDevice : actualDevice.getValue().getSchemaDevices()) {
-                if (schemaDevice.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay()){
 
+            int nn = actualDevice.getValue().getSchemaDevices().size();
+            System.out.println("actualDevice: " + nn);
+            for (SchemaDevice schemaDevice : actualDevice.getValue().getSchemaDevices()) {
+
+                if (schemaDevice.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay()){
                     iLog.info("====EXECUTING==== for device = > " + actualDevice.getValue().getName());
                     if (schemaDevice.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay()) {
                         executeLighter(schemaDevice);
@@ -174,14 +179,15 @@ public class Scheduler {
 
                 if (secDiff < 60) {
 
-                    Util.printMessage(String.format("Device {%s} to be executed {%s} in %s secs",
+                    Util.printMessage(String.format("Just a seconds left for: {%s} to be executed {%s} in %s secs",
                             String.valueOf(actualDevice.getValue().getName()),
                             schemaDevice.getAction(),
                             String.valueOf(secDiff)));
+                    System.out.println("\n");
+
                 } else {
 
                     Integer mins = schemaDevice.getTimePoint().getMinuteOfDay() - DateTime.now().getMinuteOfDay();
-
 
                     Util.printMessage(String.format("Device {%s} to be executed {%s} in %s mins timepoint will be = {%s}",
                             String.valueOf(actualDevice.getValue().getName()),
