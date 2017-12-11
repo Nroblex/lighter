@@ -26,10 +26,13 @@ public class Scheduler {
 
         iLog.info("Starting Scheduler");
 
+        //Read complete database-file directly
         dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
 
+
+
         configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 60000, 60000); //Wait one minute, then read every minute
-        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 10000, 500); // wait ten seconds then read every half second
+        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 1000, 1000); // wait ten seconds then read every half second
 
         iLog.info("Timers were started!");
 
@@ -48,7 +51,7 @@ public class Scheduler {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        //dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
+                        dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
                         if (dbConfiguredDevices.size() > 0 && dbConfiguredDevices != null) {
                             logInformation();
                         }
@@ -96,7 +99,28 @@ public class Scheduler {
             if (actualDevice.getValue().getSchemaDevices()  == null)
                 continue;
 
+            /*
+            List<SchemaDevice> schemaDevices = actualDevice.getValue().getSchemaDevices();
+
+            SchemaDevice deviceToExecute
+                    = schemaDevices
+                    .stream()
+                    .filter(p -> p.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay())
+                    .findFirst()
+                    .get();
+
+            if (deviceToExecute != null){
+                System.out.println("Executing for device = " + deviceToExecute.getDeviceID());
+            }
+
+            */
+
+
             for (SchemaDevice schemaDevice : actualDevice.getValue().getSchemaDevices()) {
+
+                System.out.println("executeIfOnTime: " +
+                        schemaDevice.getTimePoint().getSecondOfDay() + " timsecondNow = " +
+                        DateTime.now().getSecondOfDay());
 
                 if (schemaDevice.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay()){
 
@@ -107,7 +131,6 @@ public class Scheduler {
                     iLog.info("====END EXECUTING====");
                 }
             }
-
 
         }
     }
@@ -156,7 +179,7 @@ public class Scheduler {
         //Util.printMessage(String.format("Det finns %s konfigurerade tider.", String.valueOf(dbConfiguredDevices.size())));
 
         //dbConfiguredDevices.forEach((k, v)->System.out.println("Key = " + k + " Value = " + v);
-
+        int idPreviousDeviceId = 0;
         boolean valueExists = false;
 
         try {
@@ -182,6 +205,13 @@ public class Scheduler {
 
                 Integer secDiff = schemaDevice.getTimePoint().getSecondOfDay() - DateTime.now().getSecondOfDay();
 
+                if (idPreviousDeviceId == 0) {
+                    idPreviousDeviceId = schemaDevice.getDeviceID();
+                }
+                if (idPreviousDeviceId != schemaDevice.getDeviceID()){
+                    idPreviousDeviceId=0;
+                    System.out.println("\n");
+                }
                 if (secDiff < 60) {
 
                     Util.printMessage(String.format("Just a seconds left for: {%s} to be executed {%s} in %s secs",
@@ -201,7 +231,6 @@ public class Scheduler {
                             String.valueOf(mins),
                             schemaDevice.getTimePoint().toLocalTime().toString()));
 
-                    iLog.debug(Util.getPrintMessage());
 
                 }
 

@@ -10,6 +10,7 @@ public class Util {
     static {
         try {
             configFile = new File(".").getCanonicalPath().concat("/config/settings.properties");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,6 +61,25 @@ public class Util {
         return prop.getProperty(setting);
     }
 
+    private static Integer parseIntSetting(String setting){
+
+        String settingAsString = null;
+
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(configFile));
+            settingAsString = properties.getProperty(setting);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Integer.parseInt(settingAsString);
+    }
+
+    public static Integer getDbCheckInterval() {
+        return parseIntSetting("dbchecktimeinterval");
+    }
     public static String getSchemaDevice(){
         return parseSetting("schemadevice");
     }
