@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<devices>
+
+<!-- Config för Kontakt-skrivbord -->
+	<device deviceId='2' weekday='Måndag'>
+		<id>585</id>
+		<timepoint>19:35</timepoint>
+ 		<action>ON</action>
+	</device>
+	<device deviceId='2' weekday='Måndag'>
+		<id>587</id>
+		<timepoint>22:50</timepoint>
+ 		<action>OFF</action>
+	</device>
+	<device deviceId='2' weekday='Måndag'>
+		<id>588</id>
+		<timepoint>23:10</timepoint>
+ 		<action>ON</action>
+	</device>
+	<device deviceId='2' weekday='Onsdag'>
+		<id>589</id>
+		<timepoint>10:00</timepoint>
+ 		<action>ON</action>
+	</device>
+</devices>

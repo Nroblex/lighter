@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--id är ett unikt löpnummer-->
+<devices>
+    <!-- kökskontakt 5 -->
+    <device deviceId="5" weekday="fredag">
+        <id>100</id>
+        <timepoint>12:00:00</timepoint>
+        <action>ON</action>
+    </device>
+    <device deviceId="5" weekday="fredag">
+        <id>100</id>
+        <timepoint>10:02:00</timepoint>
+        <action>ON</action>
+    </device>
+    <device deviceId="5" weekday='lördag'>
+        <id>101</id>
+        <timepoint>23:01:30</timepoint>
+        <action>OFF</action>
+    </device>
+    <!-- Skriv-bordskontakt-->
+    <device deviceId="2" weekday="söndag">
+        <id>102</id>
+        <timepoint>11:19:29</timepoint>
+        <action>ON</action>
+    </device>
+
+    <device deviceId="2" weekday="söndag">
+        <id>102</id>
+        <timepoint>13:06:30</timepoint>
+        <action>ON</action>
+    </device>
+</devices>

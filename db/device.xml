@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<Devices>
+	<DeviceConfig>
+		<DeviceName>Kontakt-Alexandras-Skrivbord</DeviceName>
+		<DeviceId>2</DeviceId>
+		<Comment>Nexa-kontakt</Comment>
+	</DeviceConfig>
+	<DeviceConfig>
+		<DeviceName>Kontakt-Anders-Skrivbord</DeviceName>
+		<DeviceId>3</DeviceId>
+		<Comment>Nexa-kontakt</Comment>
+	</DeviceConfig>
+	<DeviceConfig>
+		<DeviceName>Arbetsrum nedervåning</DeviceName>
+		<DeviceId>4</DeviceId>
+		<Comment>Infälld-Nexa-kontakt</Comment>
+	</DeviceConfig>
+	<DeviceConfig>
+		<DeviceName>Vardagsrum</DeviceName>
+		<DeviceId>5</DeviceId>
+		<Comment>Nexa-kontakt</Comment>
+	</DeviceConfig>
+	<DeviceConfig>
+		<DeviceName>Kontakt-Ovanvåning</DeviceName>
+		<DeviceId>6</DeviceId>
+		<Comment>Nexa-kontakt</Comment>
+	</DeviceConfig>
+</Devices>
