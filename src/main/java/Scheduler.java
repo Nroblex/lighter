@@ -25,15 +25,17 @@ public class Scheduler {
     public Scheduler() {
 
         iLog.info("Starting Scheduler");
-        configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 0, 10000); //read every tenth second.
-        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 5, 500);
+
+        dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
+
+        configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 60000, 60000); //read every tenth second.
+        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 10000, 500);
 
         iLog.info("Timers were started!");
 
         if (dbConfiguredDevices.size() > 0){
             iLog.info("There are " + dbConfiguredDevices.size() + " configured devices.");
         }
-
 
     }
 
@@ -46,7 +48,7 @@ public class Scheduler {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
+                        //dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
                         if (dbConfiguredDevices.size() > 0 && dbConfiguredDevices != null) {
                             logInformation();
                         }
@@ -55,8 +57,10 @@ public class Scheduler {
                 });
             } catch (InterruptedException e) {
                 iLog.error(e);
+                e.printStackTrace();
             } catch (InvocationTargetException e) {
                 iLog.error(e);
+                e.printStackTrace();
             }
 
         }
@@ -82,24 +86,24 @@ public class Scheduler {
     };
 
     private synchronized void executeIfOnTime() {
+
         Iterator iterator = dbConfiguredDevices.entrySet().iterator();
-
-
 
         while (iterator.hasNext()) {
             //Map.Entry<Integer, SchemaDevice> actualDevice = (Map.Entry) iterator.next();
             Map.Entry<Integer, Device> actualDevice = (Map.Entry)iterator.next();
 
-            int nn = actualDevice.getValue().getSchemaDevices().size();
-            System.out.println("actualDevice: " + nn);
+            if (actualDevice.getValue().getSchemaDevices()  == null)
+                continue;
+
             for (SchemaDevice schemaDevice : actualDevice.getValue().getSchemaDevices()) {
 
                 if (schemaDevice.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay()){
+
                     iLog.info("====EXECUTING==== for device = > " + actualDevice.getValue().getName());
                     if (schemaDevice.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay()) {
                         executeLighter(schemaDevice);
                     }
-
                     iLog.info("====END EXECUTING====");
                 }
             }
@@ -135,7 +139,6 @@ public class Scheduler {
                     new InputStreamReader(proc.getInputStream()));
             while ((s = br.readLine()) != null) {
                 System.out.println("line: " + s);
-                iLog.info("line: " + s);
             }
             proc.waitFor();
             System.out.println ("exit: " + proc.exitValue());
@@ -147,7 +150,6 @@ public class Scheduler {
 
 
     }
-
 
     private void logInformation() {
 
@@ -172,6 +174,9 @@ public class Scheduler {
         while (iterator.hasNext()) {
             valueExists=true;
             Map.Entry<Integer, Device> actualDevice = (Map.Entry) iterator.next();
+
+            if (actualDevice.getValue().getSchemaDevices() == null)
+                continue;
 
             for (SchemaDevice schemaDevice : actualDevice.getValue().getSchemaDevices()) {
 

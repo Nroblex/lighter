@@ -6,6 +6,8 @@ import device.Util;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.w3c.dom.Document;
@@ -23,6 +25,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class XMLParser {
@@ -59,6 +63,7 @@ public class XMLParser {
         Device device=null;
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm:ss");
+
 
         Map<Integer, Device> deviceMap = new HashMap<Integer, Device>();
 
@@ -129,6 +134,7 @@ public class XMLParser {
                                             if (dtTimePoint.length() == 5)
                                                 dtTimePoint = dtTimePoint.concat(":00");
 
+
                                             timePoint = formatter.parseDateTime(dtTimePoint);
                                             action = xPathSchema.compile("./action").evaluate(schemaNode);
                                             id = xPathSchema.compile("./id").evaluate(schemaNode);
@@ -156,6 +162,7 @@ public class XMLParser {
                         }
                     }
 
+                    //if (schemaDeviceList.size() > 0)
                     device.setSchemaDevices(schemaDeviceList);
 
                     Collections.sort(schemaDeviceList, new Comparator<SchemaDevice>() {
