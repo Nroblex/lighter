@@ -28,8 +28,8 @@ public class Scheduler {
 
         dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
 
-        configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 60000, 60000); //read every tenth second.
-        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 10000, 500);
+        configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 60000, 60000); //Wait one minute, then read every minute
+        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 10000, 500); // wait ten seconds then read every half second
 
         iLog.info("Timers were started!");
 
