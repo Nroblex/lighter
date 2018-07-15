@@ -19,28 +19,78 @@ public class Scheduler {
 
     private Timer configTimer = new Timer("Read Config");
     private Timer executeTimer = new Timer("Execute Lighter");
+    private Timer randomTimer = new Timer("Random Executer");
+
+    private SchemaDevice randomDevice = new SchemaDevice();
 
     private Map<Integer, Device> dbConfiguredDevices = new HashMap<Integer, Device>();
 
-    public Scheduler() {
+    public Scheduler(boolean runRandom ) {
 
-        iLog.info("Starting Scheduler");
+        if (!runRandom){
 
-        //Read complete database-file directly
-        dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
+            iLog.info("Starting Scheduler");
+
+            //Read complete database-file directly
+            dbConfiguredDevices = XMLParser.getScheduledDevicesLaterThanNowXML();
+
+            configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 60000, 60000); //Wait one minute, then read every minute
+            executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 1000, 1000); // wait ten seconds then read every half second
+
+            iLog.info("Timers were started!");
+
+            if (dbConfiguredDevices.size() > 0){
+                iLog.info("There are " + dbConfiguredDevices.size() + " configured devices.");
+            }
 
 
+        } else { //Running at random... just to see.
 
-        configTimer.scheduleAtFixedRate(timerTaskReadConfiguration, 60000, 60000); //Wait one minute, then read every minute
-        executeTimer.scheduleAtFixedRate(timerTaskcheckIfExecute, 1000, 1000); // wait ten seconds then read every half second
+            randomDevice.setDeviceID(4);
+            randomTimer.scheduleAtFixedRate(randomExecuter, 1000, 5000); //Every fifth second.
 
-        iLog.info("Timers were started!");
-
-        if (dbConfiguredDevices.size() > 0){
-            iLog.info("There are " + dbConfiguredDevices.size() + " configured devices.");
         }
 
+
     }
+
+
+    TimerTask randomExecuter = new TimerTask() {
+        @Override
+        public void run() {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        String action = "";
+
+                        Util.printMessage("Executing hardcoded device, 4 ");
+
+                        if (randomDevice.getAction() == null){
+                            randomDevice.setAction("ON");
+                        }
+
+                        if (randomDevice.getAction().compareTo("ON") == 0){
+                            action = "-on";
+                            randomDevice.setAction("OFF");
+                        } else {
+                            action = "-of";
+                            randomDevice.setAction("ON");
+                        }
+
+
+                        Util.printMessage("Executing, mode = " + action);
+                        executeLighter(randomDevice);
+                    }
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     TimerTask timerTaskReadConfiguration = new TimerTask() {
 
@@ -99,6 +149,7 @@ public class Scheduler {
             if (actualDevice.getValue().getSchemaDevices()  == null)
                 continue;
 
+
             /*
             List<SchemaDevice> schemaDevices = actualDevice.getValue().getSchemaDevices();
 
@@ -112,15 +163,21 @@ public class Scheduler {
             if (deviceToExecute != null){
                 System.out.println("Executing for device = " + deviceToExecute.getDeviceID());
             }
-
             */
+
 
 
             for (SchemaDevice schemaDevice : actualDevice.getValue().getSchemaDevices()) {
 
-                System.out.println("executeIfOnTime: " +
-                        schemaDevice.getTimePoint().getSecondOfDay() + " timsecondNow = " +
-                        DateTime.now().getSecondOfDay());
+                //System.out.println("executeIfOnTime: " +
+                //        schemaDevice.getTimePoint().getSecondOfDay() + " timsecondNow = " +
+                //        DateTime.now().getSecondOfDay());
+
+                //Integer min = schemaDevice.getTimePoint().getMinuteOfDay();
+
+                long diffTime = schemaDevice.getTimePoint().getMinuteOfDay() - DateTime.now().getMinuteOfDay();
+                Util.printMessage("Device = " + schemaDevice.getDeviceID() + " TimePoint = " + schemaDevice.getTimePoint().toLocalTime().toString() + " wait-minutes, to exec. = " + diffTime);
+
 
                 if (schemaDevice.getTimePoint().getSecondOfDay() == DateTime.now().getSecondOfDay()){
 

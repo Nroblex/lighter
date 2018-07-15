@@ -25,14 +25,27 @@ public class ProgramLighter {
         if (args[0].compareTo("-c") == 0){
             printConfig();
             return;
+
         } else if (args[0].compareTo("-r") == 0){
             System.out.println("Startar!");
+            iLog.info("Entering runmode r.");
+            new Scheduler(false);
 
-        } else {
+        } else if (args[0].compareTo("-x") == 0) {
+            //Running random...
+            new Scheduler(true);
+        }
+        else {
             printInfo();
         }
 
-        new Scheduler();
+
+
+
+    }
+
+    private static void runRandom() {
+
 
 
     }
@@ -52,6 +65,7 @@ public class ProgramLighter {
     private static void printInfo() {
         Util.printMessage("Programmet ges argument");
         Util.printMessage("-c visa config");
+        Util.printMessage("-x random...");
         Util.printMessage("-r = run");
     }
 
