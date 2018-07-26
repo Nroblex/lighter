@@ -29,11 +29,25 @@ public class ProgramLighter {
         } else if (args[0].compareTo("-r") == 0){
             System.out.println("Startar!");
             iLog.info("Entering runmode r.");
-            new Scheduler(false);
+            new Scheduler(false).startScheduler();
 
         } else if (args[0].compareTo("-x") == 0) {
             //Running random...
-            new Scheduler(true);
+            System.out.println("Enter configured device to run test on: ");
+            String testDevice = System.console().readLine();
+
+            try{
+                Integer.parseInt(testDevice);
+            } catch (NumberFormatException e){
+                System.out.println(e.getMessage());
+                return;
+            }
+
+            Scheduler scheduler = new Scheduler(true);
+            scheduler.setDeviceToRun(Integer.parseInt(testDevice));
+            scheduler.startScheduler();
+
+
         }
         else {
             printInfo();

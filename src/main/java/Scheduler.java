@@ -25,9 +25,17 @@ public class Scheduler {
 
     private Map<Integer, Device> dbConfiguredDevices = new HashMap<Integer, Device>();
 
-    public Scheduler(boolean runRandom ) {
+    private int deviceToRun = -1;
+    private boolean isTestRunDevice = false;
 
-        if (!runRandom){
+    public Scheduler(boolean testRunDevice) {
+        isTestRunDevice=testRunDevice;
+    }
+
+
+    public void startScheduler(){
+
+        if (!isTestRunDevice){
 
             iLog.info("Starting Scheduler");
 
@@ -44,16 +52,19 @@ public class Scheduler {
             }
 
 
-        } else { //Running at random... just to see.
+        } else { //Running specified device...
 
-            randomDevice.setDeviceID(4);
-            randomTimer.scheduleAtFixedRate(randomExecuter, 1000, 5000); //Every fifth second.
+            randomDevice.setDeviceID(deviceToRun);
+            randomTimer.scheduleAtFixedRate(randomExecuter, 1000, 2000); //Every fifth second.
 
         }
 
-
     }
 
+
+    public void setTestDevcieId(int id){
+        deviceToRun=id;
+    }
 
     TimerTask randomExecuter = new TimerTask() {
         @Override
@@ -65,7 +76,7 @@ public class Scheduler {
 
                         String action = "";
 
-                        Util.printMessage("Executing hardcoded device, 4 ");
+                        Util.printMessage("Executing hardcoded device > " + deviceToRun);
 
                         if (randomDevice.getAction() == null){
                             randomDevice.setAction("ON");
@@ -137,6 +148,8 @@ public class Scheduler {
 
         }
     };
+
+
 
     private synchronized void executeIfOnTime() {
 
@@ -297,5 +310,9 @@ public class Scheduler {
 
         if (valueExists)
             System.out.println("\n");
+    }
+
+    public void setDeviceToRun(int i) {
+        deviceToRun = i;
     }
 }
